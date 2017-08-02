@@ -130,3 +130,22 @@ leas_data %>%
 # sleep: 				t010101
 # tv:						t120303 
 # religious_tv: t120304
+
+months <- c("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
+
+atus_small <- atus %>%
+	select(teage, tv = t120303, sleep = t010101, month = tumonth) %>%
+	mutate(agerange = cut(teage, breaks = c(14, 65, 85)),
+				 agerange = factor(agerange, labels = c("15 to 64", "65+"))) %>%
+	mutate(month = factor(month,  labels = months))
+
+atus_small %>%
+	group_by(agerange, month) %>%
+	summarize(tv = mean(tv)) %>%
+	ggplot(aes(agerange, tv, fill = agerange)) +
+		geom_bar(stat = "identity") +
+		scale_y_continuous(expand = c(0, 0), limits = c(0, 300)) +
+		facet_wrap(~month) +
+	labs(title = "Graham's Plot",
+			 subtitle = "Mean Time Watching Television by Age Range and Month",
+			 caption = "Urban Institute")
